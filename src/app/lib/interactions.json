@@ -1,0 +1,116 @@
+[
+  {
+    "id": "generate-content",
+    "name": "Generate Content",
+    "description": "Generate new content from a prompt in the Weka Editor AI Assistant",
+    "defaultModel": "gpt-4-1-mini",
+    "audience": "admin",
+    "usage": {
+      "requestType": "daily",
+      "defaultRequests": 40,
+      "defaultActiveUsers": 4
+    },
+    "tokens": {
+      "input": { "min": 120, "max": 120 },
+      "output": { "min": 800, "max": 1600 }
+    }
+  },
+  {
+    "id": "summarize-content",
+    "name": "Summarise Content",
+    "description": "Summarize existing content in the Weka Editor AI Assistant",
+    "defaultModel": "gpt-4-1-mini",
+    "audience": "admin",
+    "usage": {
+      "requestType": "daily",
+      "defaultRequests": 40,
+      "defaultActiveUsers": 4
+    },
+    "tokens": {
+      "base": 50,
+      "input": { "min": 1400, "max": 2800 },
+      "output": { "min": 120, "max": 200 }
+    }
+  },
+  {
+    "id": "summarize-file",
+    "name": "Summarise File Content",
+    "description": "Summarize uploaded file content in the Weka Editor AI Assistant",
+    "defaultModel": "gpt-4-1-mini",
+    "audience": "admin",
+    "usage": {
+      "requestType": "daily",
+      "defaultRequests": 5,
+      "defaultActiveUsers": 4
+    },
+    "tokens": {
+      "input": { "min": 5000, "max": 15000 },
+      "output": { "min": 500, "max": 1000 }
+    }
+  },
+  {
+    "id": "localize-text",
+    "name": "Localise Text",
+    "description": "Translate custom elements within a Totara installation",
+    "defaultModel": "gpt-4-1-mini",
+    "audience": "admin",
+    "usage": {
+      "requestType": "monthly",
+      "defaultRequests": 100,
+      "defaultActiveUsers": 4
+    },
+    "tokens": {
+      "base": 200,
+      "input": { "min": 120, "max": 800 },
+      "output": { "min": 800, "max": 4000 }
+    }
+  },
+  {
+    "id": "image-generation",
+    "name": "Image Generation",
+    "description": "Generate images from text prompts",
+    "defaultModel": "gpt-image-1",
+    "audience": "admin",
+    "usage": {
+      "requestType": "monthly",
+      "defaultRequests": 5,
+      "defaultActiveUsers": 400
+    },
+    "tokens": {
+      "input": { "min": 120, "max": 800 },
+      "output": { "min": 0, "max": 0 }
+    }
+  },
+  {
+    "id": "knowledge-checkin",
+    "name": "Knowledge Check-in Generator",
+    "description": "Generate quizzes from content for reinforcement learning",
+    "defaultModel": "gpt-4-1-mini",
+    "audience": "admin",
+    "usage": {
+      "requestType": "monthly",
+      "defaultRequests": 5,
+      "defaultActiveUsers": 4
+    },
+    "tokens": {
+      "input": { "min": 5000, "max": 10000 },
+      "output": { "min": 3000, "max": 3000 }
+    }
+  },
+  {
+    "id": "goal-generator",
+    "name": "Goal Generator",
+    "description": "Generate SMART goals from user responses",
+    "defaultModel": "gpt-4-1-mini",
+    "audience": "user",
+    "usage": {
+      "requestType": "monthly",
+      "defaultRequests": 5,
+      "defaultActiveUsers": 1000
+    },
+    "tokens": {
+      "input": { "min": 500, "max": 500 },
+      "output": { "min": 200, "max": 200 }
+    }
+  }
+] 

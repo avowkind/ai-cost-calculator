@@ -36,8 +36,8 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({
     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">Global Settings</h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="space-y-2">
+      <div className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-2">
           <label htmlFor="adminCount" className="block text-sm font-medium text-gray-700">
             Admin Count
           </label>
@@ -50,8 +50,7 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({
             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
-        
-        <div className="space-y-2">
+        <div className="flex flex-col space-y-2">
           <label htmlFor="userCount" className="block text-sm font-medium text-gray-700">
             User Count
           </label>
@@ -64,8 +63,7 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({
             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
-        
-        <div className="space-y-2">
+        <div className="flex flex-col space-y-2">
           <label htmlFor="daysPerMonth" className="block text-sm font-medium text-gray-700">
             Working Days per Month
           </label>
@@ -79,8 +77,7 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({
             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
-        
-        <div className="space-y-2">
+        <div className="flex flex-col space-y-2">
           <label htmlFor="globalModel" className="block text-sm font-medium text-gray-700">
             Default AI Model
           </label>

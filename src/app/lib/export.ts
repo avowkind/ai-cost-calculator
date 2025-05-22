@@ -1,8 +1,8 @@
-
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { CostResult } from '../types';
 import { formatCurrency } from '../lib/utils';
+import { modelProviders, interactions } from './data';
 
 export const exportResultsToCSV = (results: CostResult[]): void => {
   // Calculate total
@@ -113,6 +113,22 @@ export const exportResultsToPDF = (results: CostResult[]): void => {
   
   // Save PDF
   doc.save('totara_ai_cost_calculation.pdf');
+};
+
+export const exportSettingsToJSON = () => {
+  const data = {
+    modelProviders,
+    interactions
+  };
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'ai-cost-settings.json');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 };
 
 export const handleExport = (results: CostResult[], format: 'csv' | 'pdf'): void => {

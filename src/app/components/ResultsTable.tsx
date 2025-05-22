@@ -4,10 +4,9 @@ import { formatCurrency } from '../lib/utils';
 
 interface ResultsTableProps {
   results: CostResult[];
-  onExport: () => void;
 }
 
-const ResultsTable: React.FC<ResultsTableProps> = ({ results, onExport }) => {
+const ResultsTable: React.FC<ResultsTableProps> = ({ results }) => {
   const totalCost = results.reduce(
     (total, result) => ({
       min: total.min + result.cost.min,
@@ -20,12 +19,6 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ results, onExport }) => {
     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold text-gray-800">Cost Calculation Results</h2>
-        <button
-          onClick={onExport}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          Export Results
-        </button>
       </div>
 
       <div className="overflow-x-auto">

@@ -8,7 +8,7 @@ import ResultsTable from './components/ResultsTable';
 import SummaryPanel from './components/SummaryPanel';
 import { modelProviders, interactions, getDefaultSettings } from './lib/data';
 import { calculateCosts, calculateTotalCost } from './lib/utils';
-import { handleExport } from './lib/export';
+import { handleExport, exportSettingsToJSON } from './lib/export';
 import { CalculationSettings, CostResult } from './types';
 
 export default function Home() {
@@ -103,10 +103,107 @@ export default function Home() {
         ...prev.interactionSettings,
         [interactionId]: {
           ...prev.interactionSettings[interactionId],
-          activeUsers: value
+          activeUsers: value,
+          useSystemUserCount: false,
+          useSystemAdminCount: false
         }
       }
     }));
+  };
+
+  const handleInteractionActiveUsersModeChange = (interactionId: string, mode: 'admin' | 'user' | 'custom', audience: string) => {
+    setSettings(prev => {
+      const newSettings = { ...prev };
+      const interactionSetting = newSettings.interactionSettings[interactionId];
+      interactionSetting.activeUsersMode = mode;
+      if (mode === 'admin') {
+        interactionSetting.activeUsers = newSettings.adminCount;
+      } else if (mode === 'user') {
+        interactionSetting.activeUsers = newSettings.userCount;
+      }
+      // For 'custom', do not change activeUsers
+      return newSettings;
+    });
+  };
+
+  // Toggle between system/global and overridden user/admin count
+  const handleToggleSystemUserCount = (interactionId: string, useSystem: boolean, audience: string) => {
+    setSettings(prev => {
+      const newSettings = { ...prev };
+      const interactionSetting = newSettings.interactionSettings[interactionId];
+      if (useSystem) {
+        if (audience === 'admin') {
+          interactionSetting.useSystemAdminCount = true;
+          interactionSetting.useSystemUserCount = false;
+          interactionSetting.activeUsers = newSettings.adminCount;
+        } else {
+          interactionSetting.useSystemUserCount = true;
+          interactionSetting.useSystemAdminCount = false;
+          interactionSetting.activeUsers = newSettings.userCount;
+        }
+      } else {
+        if (audience === 'admin') {
+          interactionSetting.useSystemAdminCount = false;
+        } else {
+          interactionSetting.useSystemUserCount = false;
+        }
+        // Do not change activeUsers here; user will edit it manually
+      }
+      return newSettings;
+    });
+  };
+
+  // Handle token range changes for input/output
+  const handleInteractionTokensChange = (
+    interactionId: string,
+    type: 'input' | 'output' | 'base',
+    minOrBase: number,
+    max?: number
+  ) => {
+    setSettings(prev => {
+      const originalTokens = interactions.find(i => i.id === interactionId)?.tokens;
+      const prevTokens = prev.interactionSettings[interactionId]?.tokens as Partial<{
+        base: number;
+        input: { min: number; max: number };
+        output: { min: number; max: number };
+      }> || {};
+      if (type === 'base') {
+        return {
+          ...prev,
+          interactionSettings: {
+            ...prev.interactionSettings,
+            [interactionId]: {
+              ...prev.interactionSettings[interactionId],
+              tokens: {
+                ...prevTokens,
+                base: minOrBase,
+                input: prevTokens.input || originalTokens?.input || { min: 0, max: 0 },
+                output: prevTokens.output || originalTokens?.output || { min: 0, max: 0 },
+              },
+            },
+          },
+        };
+      } else {
+        return {
+          ...prev,
+          interactionSettings: {
+            ...prev.interactionSettings,
+            [interactionId]: {
+              ...prev.interactionSettings[interactionId],
+              tokens: {
+                base: prevTokens.base ?? originalTokens?.base,
+                input: type === 'input'
+                  ? { min: minOrBase, max: max! }
+                  : prevTokens.input || originalTokens?.input || { min: 0, max: 0 },
+                output: type === 'output'
+                  ? { min: minOrBase, max: max! }
+                  : prevTokens.output || originalTokens?.output || { min: 0, max: 0 },
+              },
+            },
+          },
+        };
+      }
+    });
   };
 
   // Handle export
@@ -114,50 +211,85 @@ export default function Home() {
     handleExport(results, 'csv');
   };
 
+  // Handle reset to defaults
+  const handleReset = () => {
+    const defaults = getDefaultSettings();
+    setSettings(defaults);
+    localStorage.setItem('aiCostCalculatorSettings', JSON.stringify(defaults));
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header />
+      <Header onExportSettings={exportSettingsToJSON} onExportResults={handleExportResults} onReset={handleReset} />
       
       <main className="container mx-auto px-4 py-8">
-        <GlobalSettings
-          adminCount={settings.adminCount}
-          userCount={settings.userCount}
-          daysPerMonth={settings.daysPerMonth}
-          selectedGlobalModel={settings.selectedGlobalModel}
-          modelProviders={modelProviders}
-          onAdminCountChange={handleAdminCountChange}
-          onUserCountChange={handleUserCountChange}
-          onDaysPerMonthChange={handleDaysPerMonthChange}
-          onGlobalModelChange={handleGlobalModelChange}
-        />
-        
-        <SummaryPanel totalCost={totalCost} />
-        
-        <ResultsTable results={results} onExport={handleExportResults} />
-        
+        <div className="flex flex-col md:flex-row gap-6 mb-6">
+          <div className="w-full md:w-2/3">
+            <SummaryPanel totalCost={totalCost} results={results.map(r => ({ interactionName: r.interactionName, cost: r.cost }))} />
+          </div>
+          <div className="w-full md:w-1/3">
+            <GlobalSettings
+              adminCount={settings.adminCount}
+              userCount={settings.userCount}
+              daysPerMonth={settings.daysPerMonth}
+              selectedGlobalModel={settings.selectedGlobalModel}
+              modelProviders={modelProviders}
+              onAdminCountChange={handleAdminCountChange}
+              onUserCountChange={handleUserCountChange}
+              onDaysPerMonthChange={handleDaysPerMonthChange}
+              onGlobalModelChange={handleGlobalModelChange}
+            />
+          </div>
+        </div>
+        <ResultsTable results={results} />
         <div className="mb-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">AI Interactions</h2>
           
-          {interactions.map(interaction => (
-            <InteractionPanel
-              key={interaction.id}
-              interaction={interaction}
-              modelProviders={modelProviders}
-              selectedModel={
-                settings.interactionSettings[interaction.id]?.selectedModel || 
-                settings.selectedGlobalModel
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {interactions.map(interaction => {
+              // Get tokens from settings or fall back to interaction.tokens
+              const tokens = settings.interactionSettings[interaction.id]?.tokens || interaction.tokens;
+              const enabled = settings.interactionSettings[interaction.id]?.enabled !== false;
+              const activeUsersMode = settings.interactionSettings[interaction.id]?.activeUsersMode || (interaction.audience === 'admin' ? 'admin' : 'user');
+              let activeUsers = settings.interactionSettings[interaction.id]?.activeUsers || 0;
+              if (activeUsersMode === 'admin') {
+                activeUsers = settings.adminCount;
+              } else if (activeUsersMode === 'user') {
+                activeUsers = settings.userCount;
               }
-              requests={settings.interactionSettings[interaction.id]?.requests || 0}
-              activeUsers={
-                interaction.id === 'goal-generator'
-                  ? settings.userCount
-                  : settings.interactionSettings[interaction.id]?.activeUsers || 0
-              }
-              onModelChange={(modelId) => handleInteractionModelChange(interaction.id, modelId)}
-              onRequestsChange={(value) => handleInteractionRequestsChange(interaction.id, value)}
-              onActiveUsersChange={(value) => handleInteractionActiveUsersChange(interaction.id, value)}
-            />
-          ))}
+              return (
+                <InteractionPanel
+                  key={interaction.id}
+                  interaction={interaction}
+                  modelProviders={modelProviders}
+                  selectedModel={
+                    settings.interactionSettings[interaction.id]?.selectedModel || 
+                    settings.selectedGlobalModel
+                  }
+                  requests={settings.interactionSettings[interaction.id]?.requests || 0}
+                  activeUsers={activeUsers}
+                  tokens={tokens}
+                  enabled={enabled}
+                  activeUsersMode={activeUsersMode}
+                  onToggleEnabled={() => setSettings(prev => ({
+                    ...prev,
+                    interactionSettings: {
+                      ...prev.interactionSettings,
+                      [interaction.id]: {
+                        ...prev.interactionSettings[interaction.id],
+                        enabled: !enabled
+                      }
+                    }
+                  }))}
+                  onModelChange={(modelId) => handleInteractionModelChange(interaction.id, modelId)}
+                  onRequestsChange={(value) => handleInteractionRequestsChange(interaction.id, value)}
+                  onActiveUsersChange={(value) => handleInteractionActiveUsersChange(interaction.id, value)}
+                  onActiveUsersModeChange={(mode) => handleInteractionActiveUsersModeChange(interaction.id, mode, interaction.audience)}
+                  onTokensChange={handleInteractionTokensChange}
+                />
+              );
+            })}
+          </div>
         </div>
       </main>
       
