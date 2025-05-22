@@ -1,6 +1,6 @@
 import React from 'react';
 import { theme } from '../theme';
-
+import Image from 'next/image';
 interface HeaderProps {
   onExportSettings: () => void;
   onExportResults: () => void;
@@ -18,7 +18,14 @@ const Header: React.FC<HeaderProps> = ({ onExportSettings, onExportResults, onRe
     >
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center">
-          <img src="/totara_logo.svg" alt="Totara Logo" className="h-16 w-16 mr-5" />
+          <Image
+            src="/totara_logo.svg"
+            alt="Totara Logo"
+            width={64}
+            height={64}
+            className="mr-5"
+            priority
+          />
           <div>
             <h1 className="text-2xl font-bold">Totara LMS AI Cost Calculator</h1>
             <p className="text-sm opacity-80">Evaluate costs for AI model usage across different AI Interactions</p>

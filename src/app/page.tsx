@@ -111,7 +111,7 @@ export default function Home() {
     }));
   };
 
-  const handleInteractionActiveUsersModeChange = (interactionId: string, mode: 'admin' | 'user' | 'custom', audience: string) => {
+  const handleInteractionActiveUsersModeChange = (interactionId: string, mode: 'admin' | 'user' | 'custom') => {
     setSettings(prev => {
       const newSettings = { ...prev };
       const interactionSetting = newSettings.interactionSettings[interactionId];
@@ -126,32 +126,6 @@ export default function Home() {
     });
   };
 
-  // Toggle between system/global and overridden user/admin count
-  const handleToggleSystemUserCount = (interactionId: string, useSystem: boolean, audience: string) => {
-    setSettings(prev => {
-      const newSettings = { ...prev };
-      const interactionSetting = newSettings.interactionSettings[interactionId];
-      if (useSystem) {
-        if (audience === 'admin') {
-          interactionSetting.useSystemAdminCount = true;
-          interactionSetting.useSystemUserCount = false;
-          interactionSetting.activeUsers = newSettings.adminCount;
-        } else {
-          interactionSetting.useSystemUserCount = true;
-          interactionSetting.useSystemAdminCount = false;
-          interactionSetting.activeUsers = newSettings.userCount;
-        }
-      } else {
-        if (audience === 'admin') {
-          interactionSetting.useSystemAdminCount = false;
-        } else {
-          interactionSetting.useSystemUserCount = false;
-        }
-        // Do not change activeUsers here; user will edit it manually
-      }
-      return newSettings;
-    });
-  };
 
   // Handle token range changes for input/output
   const handleInteractionTokensChange = (
@@ -284,7 +258,7 @@ export default function Home() {
                   onModelChange={(modelId) => handleInteractionModelChange(interaction.id, modelId)}
                   onRequestsChange={(value) => handleInteractionRequestsChange(interaction.id, value)}
                   onActiveUsersChange={(value) => handleInteractionActiveUsersChange(interaction.id, value)}
-                  onActiveUsersModeChange={(mode) => handleInteractionActiveUsersModeChange(interaction.id, mode, interaction.audience)}
+                  onActiveUsersModeChange={(mode) => handleInteractionActiveUsersModeChange(interaction.id, mode)}
                   onTokensChange={handleInteractionTokensChange}
                 />
               );
