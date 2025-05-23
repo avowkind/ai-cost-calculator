@@ -15,7 +15,10 @@ export const calculateCosts = (settings: CalculationSettings): CostResult[] => {
     .filter(interaction => settings.interactionSettings[interaction.id]?.enabled !== false)
     .map(interaction => {
       const interactionSettings = settings.interactionSettings[interaction.id];
-      const modelId = interactionSettings.selectedModel || settings.selectedGlobalModel;
+      let modelId = interactionSettings.selectedModel || settings.selectedGlobalModel;
+      if (modelId === 'default') {
+        modelId = settings.selectedGlobalModel;
+      }
       const modelInfo = findModelById(modelId);
       
       if (!modelInfo) {

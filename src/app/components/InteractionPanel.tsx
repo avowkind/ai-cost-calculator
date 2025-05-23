@@ -6,6 +6,7 @@ interface InteractionPanelProps {
   interaction: Interaction;
   modelProviders: ModelProvider[];
   selectedModel: string;
+  globalModelName: string;
   requests: number;
   activeUsers: number;
   tokens: {
@@ -32,6 +33,7 @@ const InteractionPanel: React.FC<InteractionPanelProps> = ({
   interaction,
   modelProviders,
   selectedModel,
+  globalModelName,
   requests,
   activeUsers,
   tokens,
@@ -60,6 +62,15 @@ const InteractionPanel: React.FC<InteractionPanelProps> = ({
   const availableModels = interaction.id === 'image-generation'
     ? allModels.filter(model => typeof model.perImageCost === 'number' && model.perImageCost > 0)
     : allModels;
+
+  // NEW: Add Default (Global) option for non-image-generation interactions
+  // Ensure the label always uses the latest globalModelName prop
+  const modelOptions = interaction.id === 'image-generation'
+    ? availableModels
+    : [
+        { id: 'default', name: `Default: ${globalModelName}` },
+        ...availableModels
+      ];
 
   // Defensive fallback for tokens
   const safeInput = tokens.input || { min: 0, max: 0 };
@@ -124,7 +135,7 @@ const InteractionPanel: React.FC<InteractionPanelProps> = ({
               onChange={(e) => onModelChange(e.target.value)}
               className="block w-full px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 h-[42px]"
             >
-              {availableModels.map((model) => (
+              {modelOptions.map((model) => (
                 <option key={model.id} value={model.id}>
                   {model.name}
                 </option>

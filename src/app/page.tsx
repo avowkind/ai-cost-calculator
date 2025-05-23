@@ -231,15 +231,31 @@ export default function Home() {
               } else if (activeUsersMode === 'user') {
                 activeUsers = settings.userCount;
               }
+
+              // Find the global model name for display
+              const globalModelId = settings.selectedGlobalModel;
+              const globalModelObj = (Array.isArray(modelProviders) ? modelProviders : [])
+                .flatMap(provider =>
+                  Array.isArray(provider.models)
+                    ? provider.models.map(model => ({
+                        id: model.id,
+                        name: `${provider.name} - ${model.name}`
+                      }))
+                    : []
+                )
+                .find(model => model.id === globalModelId);
+              const globalModelName = globalModelObj ? globalModelObj.name : 'undefined';
+
+              // Determine selected model: default if not set
+              const selectedModel = settings.interactionSettings[interaction.id]?.selectedModel ?? 'default';
+
               return (
                 <InteractionPanel
                   key={interaction.id}
                   interaction={interaction}
                   modelProviders={modelProviders}
-                  selectedModel={
-                    settings.interactionSettings[interaction.id]?.selectedModel || 
-                    settings.selectedGlobalModel
-                  }
+                  selectedModel={selectedModel}
+                  globalModelName={globalModelName}
                   requests={settings.interactionSettings[interaction.id]?.requests || 0}
                   activeUsers={activeUsers}
                   tokens={tokens}
