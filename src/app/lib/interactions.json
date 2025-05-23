@@ -3,7 +3,7 @@
     "id": "generate-content",
     "name": "Generate Content",
     "description": "Generate new content from a prompt in the Weka Editor AI Assistant",
-    "defaultModel": "gpt-4-1-mini",
+    "defaultModel": "default",
     "audience": "admin",
     "usage": {
       "requestType": "daily",
@@ -19,7 +19,7 @@
     "id": "summarize-content",
     "name": "Summarise Content",
     "description": "Summarize existing content in the Weka Editor AI Assistant",
-    "defaultModel": "gpt-4-1-mini",
+    "defaultModel": "default",
     "audience": "admin",
     "usage": {
       "requestType": "daily",
@@ -36,7 +36,7 @@
     "id": "summarize-file",
     "name": "Summarise File Content",
     "description": "Summarize uploaded file content in the Weka Editor AI Assistant",
-    "defaultModel": "gpt-4-1-mini",
+    "defaultModel": "default",
     "audience": "admin",
     "usage": {
       "requestType": "daily",
@@ -52,7 +52,7 @@
     "id": "localize-text",
     "name": "Localise Text",
     "description": "Translate custom elements within a Totara installation",
-    "defaultModel": "gpt-4-1-mini",
+    "defaultModel": "default",
     "audience": "admin",
     "usage": {
       "requestType": "monthly",
@@ -85,7 +85,7 @@
     "id": "knowledge-checkin",
     "name": "Knowledge Check-in Generator",
     "description": "Generate quizzes from content for reinforcement learning",
-    "defaultModel": "gpt-4-1-mini",
+    "defaultModel": "default",
     "audience": "admin",
     "usage": {
       "requestType": "monthly",
@@ -101,7 +101,7 @@
     "id": "goal-generator",
     "name": "Goal Generator",
     "description": "Generate SMART goals from user responses",
-    "defaultModel": "gpt-4-1-mini",
+    "defaultModel": "default",
     "audience": "user",
     "usage": {
       "requestType": "monthly",
