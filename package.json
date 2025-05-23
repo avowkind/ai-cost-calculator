@@ -6,8 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "GITHUB_PAGES=true next build",
     "start": "next start",
-    "lint": "next lint",
-    "export": "next export"
+    "lint": "next lint"
   },
   "dependencies": {
     "jspdf": "^3.0.1",
